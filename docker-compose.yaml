@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    restart: unless-stopped
+    volumes:
+      - ./volumes/db/var/lib/postgresql/data:/var/lib/postgresql/data
+      - ./volumes/db/postgresql.conf:/etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_USER: mmuser
+      POSTGRES_PASSWORD: mmuser_password
+      POSTGRES_DB: mattermost
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+
+  app:
+    image: mattermost/mattermost-team-edition
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8065:8065"
+    volumes:
+      - ./volumes/app/mattermost/config:/mattermost/config:rw
+      - ./volumes/app/mattermost/data:/mattermost/data:rw
+      - ./volumes/app/mattermost/logs:/mattermost/logs:rw
+      - ./volumes/app/mattermost/plugins:/mattermost/plugins:rw
+      - ./volumes/app/mattermost/client/plugins:/mattermost/client/plugins:rw
+    environment:
+      MM_USERNAME: mmuser
+      MM_PASSWORD: mmuser_password
+      MM_DBNAME: mattermost
+      DB_HOST: db:5432

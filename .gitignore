@@ -1,0 +1,13 @@
+# General
+*.log
+*.sql
+*.tar.gz
+
+# Docker volumes
+volumes
+
+# Backup directory
+backups/
+logfile-delete-files.log
+backup.log
+cron-backup.sh
